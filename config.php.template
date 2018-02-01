@@ -1,0 +1,45 @@
+<?php
+//This is config file, please be careful
+session_start();
+//You can change these:
+define("NAME", '##name##'); //Website name
+define("WEB_URL", "##url##"); //Used for links 
+define("MAILER_NAME", "##mailer##"); //Mailer name
+define("MAILER_ADDRESS", "##mailer_email##"); //Mailer address
+define("INSTALL_OVERRIDE", false);
+define("DEFAULT_LANGUAGE", "en_GB");
+
+require("classes/locale-negotiator.php");
+
+$negotiator = new LocaleNegotiator(DEFAULT_LANGUAGE);
+
+if (!isset($_SESSION['locale'])||isset($_GET['lang']))
+{
+	$override = ((isset($_GET['lang']))?$_GET['lang']:null);
+	$best_match = $negotiator->negotiate($override);
+	$_SESSION['locale'] = $best_match;
+}
+
+setlocale(LC_ALL, $_SESSION['locale'].".UTF-8");
+setlocale(LC_MESSAGES, $_SESSION['locale'].".UTF-8");
+bindtextdomain("server-status", __DIR__ . "/locale/");
+bind_textdomain_codeset("server-status", "utf-8"); 
+textdomain("server-status");
+
+//Database connection
+$mysqli = new mysqli("##server##","##user##","##password##","##database##");
+
+if ($mysqli->connect_errno) {
+    printf(_("Connection failed: %s\n"), $mysqli->connect_error);
+    exit();
+}
+
+$mysqli->set_charset("utf8");
+
+//This should later be translatable, maybe find a better solution?
+$statuses = array(_("Major outage"), _("Minor outage"), _("Planned maintenance"), _("Operational") );
+$classes = array("danger", "warning", "primary", "success" );
+$icons = array("fa fa-times", "fa fa-exclamation", "fa fa-info", "fa fa-check" );
+$some = array(_("Some systems are experiencing major outages"), _("Some systems are experiencing minor outages"), _("Some systems are under maintenance"));
+$all = array(_("Our systems are experiencing major outages."), _("Our systems are experiencing minor outages"), _("Our systems are under maintenance"), _("All systems operational"));
+$permissions = array(_("Super admin"), _("Admin"), _("Editor"));
