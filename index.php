@@ -1,50 +1,36 @@
 <?php
-require_once("template.php");
+//============================================================+
+// File name   : index.php
+// Begin       : 2002-01-11
+// Last Update : 2011-05-21
+//
+// Description : Redirect browser to main page
+//
+// Author: Nicola Asuni
+//
+// (c) Copyright:
+//               Nicola Asuni
+//               Tecnick.com LTD
+//               www.tecnick.com
+//               info@tecnick.com
+//
+// License:
+//    Copyright (C) 2004-2010  Nicola Asuni - Tecnick.com LTD
+//    See LICENSE.TXT file for more information.
+//============================================================+
 
-if (!file_exists("config.php"))
-{
-  require_once("install.php");
-}
-else{
+/**
+ * @file
+ * Main page of TCExam
+ * Redirects to Public Area index.
+ * @package com.tecnick.tcexam.public
+ * @brief TCExam Public Area
+ * @author Nicola Asuni
+ * @since 2004-04-20
+ */
 
-require_once("config.php");
-require_once("classes/constellation.php");
+header('Location: public/code/index.php'); //redirect browser to public main page
 
-$offset = 0;
-
-if (isset($_GET['ajax']))
-{
-  $constellation->render_incidents(false,$_GET['offset'],5);
-  exit();
-}else if (isset($_GET['offset']))
-{
-  $offset = $_GET['offset'];
-}
-
-Template::render_header("Status");
-?>
-    <div class="text-center">
-      <h2><?php echo _("Current status");?></h2>
-    </div>
-    <div id="current">
-    <?php $constellation->render_status();?>  
-    </div>
-
-<?php if ($mysqli->query("SELECT count(*) FROM status")->num_rows)
-{      
-  ?>
-      <div id="timeline">
-        <div class="item">
-          <div class="timeline">
-            <div class="line text-muted"></div>
-            <?php
-            $constellation->render_incidents(true,$offset);
-            $constellation->render_incidents(false,$offset);
-            ?>
-          </div>
-        </div>
-      </div>
-<?php } 
-
-Template::render_footer();
-}
+//============================================================+
+// END OF FILE
+//============================================================+
